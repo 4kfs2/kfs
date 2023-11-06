@@ -47,6 +47,7 @@ void terminal_putchar(char c)
 				terminal_row = 0;
 		}
 	}
+	update_cursor(terminal_column, terminal_row);
 }
  
 void terminal_write(const char* data, size_t size) 
