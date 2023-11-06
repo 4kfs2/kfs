@@ -1,5 +1,5 @@
-#include "../includes/utils.h"
-#include "../includes/terminal.h"
+#include "utils.h"
+#include "terminal.h"
 
 void kernel_main(void) 
 {

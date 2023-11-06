@@ -1,5 +1,5 @@
-#include "../includes/terminal.h"
-#include "../includes/utils.h"
+#include "terminal.h"
+#include "utils.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -47,6 +47,7 @@ void terminal_putchar(char c)
 				terminal_row = 0;
 		}
 	}
+	update_cursor(terminal_column, terminal_row);
 }
  
 void terminal_write(const char* data, size_t size) 

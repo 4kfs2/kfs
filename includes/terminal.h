@@ -2,6 +2,7 @@
 #define __TERMINAL_H__
 
 #include "vga.h"
+#include "keyboard.h"
 #include <stddef.h>
 
 void terminal_initialize(void);
