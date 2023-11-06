@@ -8,7 +8,7 @@ LINKER		:= linker.ld
 INCLUDES	:= includes
 
 SRCS_DIR	:= srcs/
-SRCS		:= kernel.c terminal.c utils.c vga.c
+SRCS		:= kernel.c terminal.c utils.c vga.c printf.c
 OBJS_DIR	:= objs/
 OBJSNAME	:= $(SRCS:.c=.o)
 OBJS		:= $(SRCS:%.c=$(OBJS_DIR)%.o)
@@ -34,4 +34,4 @@ $(NAME).iso : $(BIN)
 .PHONY		: clean
 clean		:
 	$(RM) $(BIN) boot.o $(OBJS)
-	$(RM) isodir/boot/$(NAME).bin
+	$(RM) -rf isodir objs
