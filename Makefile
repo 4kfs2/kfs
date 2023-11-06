@@ -2,7 +2,7 @@ NAME		:= myos
 BIN			:= $(NAME).bin
 CC			:= i686-elf-gcc
 LD			:= i686-elf-ld -T
-CFLAGS		:= -ffreestanding -nostdlib -Wall -Wextra
+CFLAGS		:= -ffreestanding -nostdlib -Wall -Wextra -O2
 AS			:= i686-elf-as
 LINKER		:= linker.ld
 INCLUDES	:= includes
@@ -15,7 +15,7 @@ OBJS		:= $(SRCS:%.c=$(OBJS_DIR)%.o)
 
 $(OBJS_DIR)%.o : $(SRCS_DIR)%.c
 	@mkdir -p objs
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ -I $(INCLUDES)
 
 all			: $(BIN)
 
@@ -29,7 +29,7 @@ boot.o		: boot.s
 	$(AS) $^ -o $@
 
 $(NAME).iso : $(BIN)
-	@../build/grub-mkrescue -o $@ isodir
+	@grub-mkrescue -o $@ isodir
 
 .PHONY		: clean
 clean		:
