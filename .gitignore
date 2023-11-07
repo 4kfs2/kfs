@@ -3,3 +3,4 @@ myos.bin
 myos.iso
 objs/
 isodir/
+.vscode

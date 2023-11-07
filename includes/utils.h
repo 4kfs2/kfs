@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 
+int		printf(const char *, ...);
 size_t strlen(const char*);
 
 #endif
