@@ -1,4 +1,4 @@
-#include "terminal.h"
+#include "../includes/terminal.h"
 
 #define KEYBOARD_COMMAND_PORT	0x64
 #define KEYBOARD_DATA_PORT		0x60
@@ -17,7 +17,7 @@ static void outb(uint16_t port, uint8_t data)
 
 void update_cursor(int x, int y)
 {
-	uint16_t pos = y * 80 + x;
+	uint16_t pos = y * VGA_WIDTH + x;
  
 	outb(0x3D4, 0x0F);
 	outb(0x3D5, (uint8_t) (pos & 0xFF));

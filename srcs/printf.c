@@ -1,5 +1,5 @@
-#include "terminal.h"
-#include "utils.h"
+#include "../includes/terminal.h"
+#include "../includes/utils.h"
 
 #include <stdarg.h>
 
