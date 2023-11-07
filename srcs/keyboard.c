@@ -1,4 +1,4 @@
-#include "terminal.h"
+#include "../includes/terminal.h"
 
 #define KEYBOARD_COMMAND_PORT	0x64
 #define KEYBOARD_DATA_PORT		0x60

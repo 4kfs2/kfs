@@ -1,5 +1,5 @@
-#include "terminal.h"
-#include "utils.h"
+#include "../includes/terminal.h"
+#include "../includes/utils.h"
 
 size_t terminal_row;
 size_t terminal_column;
