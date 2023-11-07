@@ -32,49 +32,45 @@ void terminal_putentryat(unsigned char c, uint8_t color, size_t x, size_t y)
 }
 
 void terminal_scroll(int line) {
-	char c;
-	uint16_t *x;
- 
-	for(x = line * VGA_WIDTH + 0xB8000; x < VGA_WIDTH; x++) {
-		c = *x;
-		*(x - VGA_WIDTH) = c;
+	size_t idx;
+	uint16_t ch;
+
+	for(int x = 0; x < VGA_WIDTH; x++) {
+		idx = line * (VGA_WIDTH) + x; 
+		ch = terminal_buffer[idx];
+		terminal_buffer[idx - VGA_WIDTH] = ch;
 	}
 }
 
 void terminal_delete_last_line() {
-	int x, *ptr;
+	int x;
+	size_t idx;
  
-	for(x = 0; x < VGA_WIDTH * 2; x++) {
-		ptr = 0xB8000 + (VGA_WIDTH * 2) * (VGA_HEIGHT - 1) + x;
-		*ptr = 0;
+	for(x = 0; x < VGA_WIDTH; x++) {
+		idx = (VGA_WIDTH) * (VGA_HEIGHT - 1) + x;
+		terminal_buffer[idx] = vga_entry(' ', terminal_color);
 	}
 }
- 
+
 void terminal_putchar(char c) 
 {
 	int line;
 	unsigned char uc = c;
 
+	if (c == '\n') {
+		terminal_row++;
+		terminal_column = 0;
+		goto out;
+	}
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
 	if (++terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
 		terminal_row++;
 	}
-	if (c == '\n') {
-		terminal_row++;
-		terminal_column = 0;
-	}
+out:
 	if (terminal_row == VGA_HEIGHT) {
 		for(line = 1; line <= VGA_HEIGHT - 1; line++)
-		{
-			uint16_t* idx;
-			char ch;
-			for(int x = 0; x < VGA_WIDTH * 2; x++) {
-				idx = line * (VGA_WIDTH * 2) + x + 0xB8000; 
-				ch = *idx;
-				*(idx - VGA_WIDTH) = ch;
-			}
-		}
+			terminal_scroll(line);
 		terminal_delete_last_line();
 		terminal_row = VGA_HEIGHT - 1;
 	}
