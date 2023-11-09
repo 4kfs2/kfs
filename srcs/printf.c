@@ -44,7 +44,7 @@ static int print_num(long num, int base)
 	}
 
 	unsigned int quotient = get_quot(num, base);
-	while (num)
+	while (quotient)
 	{
 		terminal_putchar(chars[num / quotient]);
 		num %= quotient;
