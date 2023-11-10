@@ -18,10 +18,10 @@ $(OBJS_DIR)%.o : $(SRCS_DIR)%.c
 	@mkdir -p objs
 	$(CC) $(CFLAGS) -c $< -o $@ -I $(INCLUDES)
 
-%.o			: $(ASMSRCS)
-	$(AS) $^ -o $@
-
 all			: $(BIN)
+
+boot.o			: $(ASMSRCS)
+	$(AS) $^ -o $@
 
 $(BIN)		: boot.o $(OBJS)
 	$(LD) $(LINKER) -o $@ $^ --verbose
