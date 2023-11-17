@@ -8,3 +8,15 @@ size_t strlen(const char* str)
 	return len;
 }
 
+void	*memcpy(void *dst, const void *src, size_t n)
+{
+	char		*dstptr;
+
+	if (!dst && !src)
+		return (NULL);
+	dstptr = dst;
+	while (n-- > 0)
+		*(char *)dst++ = *(char *)src++;
+	return (dstptr);
+}
+
