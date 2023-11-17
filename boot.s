@@ -11,6 +11,14 @@
 .long 	multiboot_end - .multiboot
 .long 	-(MAGIC + ARCH + (multiboot_end - .multiboot))
 
+mbi_tag_start:
+  .short 1
+  .short 1
+  .long mbi_tag_end - mbi_tag_start
+  .long 9
+  .align 8
+mbi_tag_end:
+
 .short	0
 .short	0
 .long	8
@@ -27,6 +35,9 @@ stack_top:
 .type _start42, @function
 _start42:
 	movl $stack_top, %esp
+	pushl	$0
+	popf
+	pushl   %ebx
 	call kernel_main
 1010:	hlt
 	jmp 1010b

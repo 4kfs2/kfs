@@ -4,6 +4,7 @@
 #include <stddef.h>
 
 int		printf(const char *, ...);
-size_t strlen(const char*);
+size_t	strlen(const char*);
+void	*memcpy(void *, const void *, size_t);
 
 #endif
