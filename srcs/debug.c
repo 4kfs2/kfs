@@ -3,19 +3,9 @@
 
 static uint64_t get_next_addr(uint32_t eip)
 {
-	unsigned char buffer[5];
-    unsigned char *address = (unsigned char *)(eip - 5);
+	uint32_t *ptr = (uint32_t*)(eip - 4);
 
-    asm volatile (
-        "mov %[addr], %%esi\n"
-        "mov $5, %%ecx\n"
-        "rep movsb\n"
-        :
-        : [addr] "r" (address), "D" (buffer)
-        : "esi", "ecx", "memory"
-    );
-
-	int32_t offset = *((int32_t*)(buffer + 1));
+	int offset = (int)(*ptr);
 	return (offset + eip);
 }
 
