@@ -9,6 +9,6 @@ struct stackframe
 	uint32_t eip;
 };
 
-void backtrace(uint32_t);
+void backtrace();
 
 #endif
