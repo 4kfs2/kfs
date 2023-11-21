@@ -15,6 +15,13 @@ static void outb(uint16_t port, uint8_t data)
 	asm volatile ("outb %0, %1" :: "a" (data), "dN" (port));
 }
 
+int out_buf_full(void)
+{
+	if (inb(0x64) & 0x01)
+		return 1;
+	return 0;
+}
+
 void update_cursor(int x, int y)
 {
 	uint16_t pos = y * VGA_WIDTH + x;
@@ -59,22 +66,18 @@ int getchar()
 {
 	char scancode;
 
-	while (1) {
-		scancode = inb(0x60);
-		if (scancode)
-			break ;
-	}
+	while (out_buf_full() == 0)
+		;
+	scancode = inb(KEYBOARD_DATA_PORT);
 	return map_scancode(scancode);
 }
 
 void keyboard()
 {
-	int b = 0;
 	while (1)
 	{
 		char c = getchar();
-		if (c && b!=c) {
-			b = c;
+		if (c) {
 			terminal_putchar(c);
 		}
 	}
