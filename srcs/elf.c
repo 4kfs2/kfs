@@ -39,7 +39,6 @@ uint32_t find_symbol(uint32_t addr)
 
 	for (uint32_t j = 0; j < num_symbols; ++j)
 	{
-		char symbol_name[215];
 		if (symbols[j].st_name != 0)
 		{
 			if (symbols[j].st_value == addr)
