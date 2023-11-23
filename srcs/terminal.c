@@ -61,9 +61,16 @@ void terminal_putchar(char c)
 		terminal_row++;
 		terminal_column = 0;
 		goto out;
+	} else if (terminal_column < 6 && c == 8) {
+		return ;
+	} else if (c == 8) {
+		terminal_column--;
+		uc = ' ';
 	}
 	terminal_putentryat(uc, terminal_color, terminal_column, terminal_row);
-	if (++terminal_column == VGA_WIDTH) {
+	if (c != 8)
+		terminal_column++;
+	if (terminal_column == VGA_WIDTH) {
 		terminal_column = 0;
 		terminal_row++;
 	}
