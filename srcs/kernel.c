@@ -17,6 +17,7 @@ static void runcmd(int index, char *cmd)
 
 void kernel_main(unsigned long addr)
 {
+	init_gdt();
 	terminal_initialize();
 	terminal_writestring("42\n");
 
