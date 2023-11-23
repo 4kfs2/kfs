@@ -8,8 +8,8 @@ LINKER		:= linker.ld
 INCLUDES	:= includes
 
 SRCS_DIR	:= srcs/
-SRCS		:= kernel.c terminal.c utils.c vga.c printf.c keyboard.c desc.c
-ASMSRCS		:= boot.s gdt.s
+ASMSRCS		:= boot.s
+SRCS		:= kernel.c terminal.c utils.c vga.c printf.c keyboard.c debug.c elf.c gdt.c
 OBJS_DIR	:= objs/
 OBJSNAME	:= $(SRCS:.c=.o)
 OBJS		:= $(SRCS:%.c=$(OBJS_DIR)%.o)
