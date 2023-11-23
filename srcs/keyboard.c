@@ -14,7 +14,7 @@ void outb(uint16_t port, uint8_t data)
 
 int out_buf_full(void)
 {
-	if (inb(0x64) & 0x01)
+	if (inb(KEYBOARD_COMMAND_PORT) & 0x01)
 		return 1;
 	return 0;
 }
@@ -67,15 +67,4 @@ int getchar()
 		;
 	scancode = inb(KEYBOARD_DATA_PORT);
 	return map_scancode(scancode);
-}
-
-void keyboard()
-{
-	while (1)
-	{
-		char c = getchar();
-		if (c) {
-			terminal_putchar(c);
-		}
-	}
 }
