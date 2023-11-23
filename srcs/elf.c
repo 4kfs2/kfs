@@ -39,7 +39,7 @@ uint32_t find_symbol(uint32_t addr)
 
 	for (uint32_t j = 0; j < num_symbols; ++j)
 	{
-		if (symbols[j].st_name != 0 || symbols[j].st_value == addr)
+		if (symbols[j].st_name != 0 && symbols[j].st_value == addr)
 				return (uint32_t)(sections[sections[i].sh_link].sh_addr + symbols[j].st_name);
 	}
 	return NULL;
