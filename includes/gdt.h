@@ -18,7 +18,7 @@ struct gdtdesc {
     uint8_t base16_23;
     uint8_t acces;
     uint8_t lim16_19:4;
-    uint8_t other:4;
+    uint8_t flag:4;
     uint8_t base24_31;
 } __attribute__ ((packed));
 

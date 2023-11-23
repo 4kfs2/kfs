@@ -4,14 +4,14 @@
 struct gdtdesc 	kgdt[GDTSIZE];
 struct gdtr		kgdtr;
 
-void init_gdt_desc(uint32_t base, uint32_t limit, uint8_t acces, uint8_t other, struct gdtdesc *desc)
+void init_gdt_desc(uint32_t base, uint32_t limit, uint8_t acces, uint8_t flag, struct gdtdesc *desc)
 {
 	desc->lim0_15 = (limit & 0xffff);
 	desc->base0_15 = (base & 0xffff);
 	desc->base16_23 = (base & 0xff0000) >> 16;
 	desc->acces = acces; // P(present 1? valid seg) DPL(privilege level 0/3) S(type 1? code/data) E(1? code) DC RW A
 	desc->lim16_19 = (limit & 0xf0000) >> 16;
-	desc->other = (other & 0xf); // G(Granularity 1? 4KB) DB(size 1? 32bit) L(1? 64bit) AVL(reserved)
+	desc->flag = (flag & 0xf); // G(Granularity 1? 4KB) DB(size 1? 32bit) L(1? 64bit) AVL(reserved)
 	desc->base24_31 = (base & 0xff000000) >> 24;
 	return;
 }
