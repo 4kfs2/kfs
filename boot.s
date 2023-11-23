@@ -10,15 +10,6 @@
 .long 	ARCH
 .long 	multiboot_end - .multiboot
 .long 	-(MAGIC + ARCH + (multiboot_end - .multiboot))
-
-mbi_tag_start:
-  .short 1
-  .short 1
-  .long mbi_tag_end - mbi_tag_start
-  .long 9
-  .align 8
-mbi_tag_end:
-
 .short	0
 .short	0
 .long	8

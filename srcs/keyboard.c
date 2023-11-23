@@ -1,18 +1,22 @@
 #include "../includes/terminal.h"
 
-#define KEYBOARD_COMMAND_PORT	0x64
-#define KEYBOARD_DATA_PORT		0x60
-
-static uint8_t inb(uint16_t port)
+uint8_t inb(uint16_t port)
 {
 	uint8_t data;
 	asm volatile ("inb %1, %0" : "=a" (data) : "dN" (port));
 	return data;
 }
 
-static void outb(uint16_t port, uint8_t data)
+void outb(uint16_t port, uint8_t data)
 {
 	asm volatile ("outb %0, %1" :: "a" (data), "dN" (port));
+}
+
+int out_buf_full(void)
+{
+	if (inb(KEYBOARD_COMMAND_PORT) & 0x01)
+		return 1;
+	return 0;
 }
 
 void update_cursor(int x, int y)
@@ -59,23 +63,8 @@ int getchar()
 {
 	char scancode;
 
-	while (1) {
-		scancode = inb(0x60);
-		if (scancode)
-			break ;
-	}
+	while (out_buf_full() == 0)
+		;
+	scancode = inb(KEYBOARD_DATA_PORT);
 	return map_scancode(scancode);
-}
-
-void keyboard()
-{
-	int b = 0;
-	while (1)
-	{
-		char c = getchar();
-		if (c && b!=c) {
-			b = c;
-			terminal_putchar(c);
-		}
-	}
 }
