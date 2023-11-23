@@ -1,16 +1,13 @@
 #include "../includes/terminal.h"
 
-#define KEYBOARD_COMMAND_PORT	0x64
-#define KEYBOARD_DATA_PORT		0x60
-
-static uint8_t inb(uint16_t port)
+uint8_t inb(uint16_t port)
 {
 	uint8_t data;
 	asm volatile ("inb %1, %0" : "=a" (data) : "dN" (port));
 	return data;
 }
 
-static void outb(uint16_t port, uint8_t data)
+void outb(uint16_t port, uint8_t data)
 {
 	asm volatile ("outb %0, %1" :: "a" (data), "dN" (port));
 }
