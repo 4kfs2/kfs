@@ -7,7 +7,7 @@ AS			:= i686-elf-as
 LINKER		:= linker.ld
 INCLUDES	:= includes
 SRCS_DIR	:= srcs/
-ASMSRCS		:= boot.s
+ASMSRCS		:= boot.s init_seg.s
 SRCS		:= kernel.c terminal.c utils.c vga.c printf.c keyboard.c debug.c elf.c reboot.c gdt.c
 OBJS_DIR	:= objs/
 OBJSNAME	:= $(SRCS:.c=.o)
