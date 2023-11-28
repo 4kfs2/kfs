@@ -21,22 +21,6 @@ static void runcmd(int index, char *cmd)
 	}
 }
 
-void func3()
-{
-	backtrace();
-}
-
-void func2()
-{
-	func3();
-}
-
-void func()
-{
-	printf("%d\n", 1 / 0);
-	func2();
-}
-
 void kernel_main(unsigned long addr)
 {
 	init_gdt();
