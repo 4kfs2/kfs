@@ -7,22 +7,23 @@ AS			:= i686-elf-as
 LINKER		:= linker.ld
 INCLUDES	:= includes
 SRCS_DIR	:= srcs/
-ASMSRCS		:= boot.s
+ASMSRCS		:= boot.s init_seg.s
 SRCS		:= kernel.c terminal.c utils.c vga.c printf.c keyboard.c debug.c elf.c reboot.c gdt.c
 OBJS_DIR	:= objs/
 OBJSNAME	:= $(SRCS:.c=.o)
 OBJS		:= $(SRCS:%.c=$(OBJS_DIR)%.o)
+OBJS		+= $(ASMSRCS:%.s=$(OBJS_DIR)%.o)
 
 $(OBJS_DIR)%.o : $(SRCS_DIR)%.c
 	@mkdir -p objs
 	$(CC) $(CFLAGS) -c $< -o $@ -I $(INCLUDES)
 
+$(OBJS_DIR)%.o : $(SRCS_DIR)asm/%.s
+	$(AS) $< -o $@ 
+
 all			: $(BIN)
 
-boot.o			: $(ASMSRCS)
-	$(AS) $^ -o $@
-
-$(BIN)		: boot.o $(OBJS)
+$(BIN)		:  $(OBJS)
 	$(LD) $(LINKER) -o $@ $^ --verbose
 	mkdir -p isodir/boot/grub
 	cp -i grub.cfg isodir/boot/grub

@@ -27,17 +27,10 @@ void init_gdt(void)
 	init_gdt_desc(0x0, 0xFFFFF, 0xF2, 0x0C, &kgdt[5]); //u_data
 	init_gdt_desc(0x0, 0x0, 0xF7, 0x0C, &kgdt[6]); //u_stack
 
-	 kgdtr.limit = GDTSIZE * 8;
-	 kgdtr.base = GDTBASE;
+	kgdtr.limit = GDTSIZE * 8;
+	kgdtr.base = GDTBASE;
 
-	 memcpy((char *) kgdtr.base, (char *) kgdt, kgdtr.limit);
+	memcpy((char *) kgdtr.base, (char *) kgdt, kgdtr.limit);
 
-	 asm("lgdtl (kgdtr)");
-
-	 asm("	movw $0x10, %ax	 \n \
-			movw %ax, %ds	 \n \
-			movw %ax, %es	 \n \
-			movw %ax, %ss	 \n \
-			ljmp $0x08, $next	 \n \
-			next:		  \n");
+	init_seg();
 }
