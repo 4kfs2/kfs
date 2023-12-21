@@ -17,10 +17,10 @@ static void runcmd(int index, char *cmd)
 
 void kernel_main(unsigned long addr)
 {
-	init_gdt();
+	// init_gdt();
 	terminal_initialize();
 
-	parse_elf(addr);
+	// parse_elf(addr);
 
 	while (1)
 	{
