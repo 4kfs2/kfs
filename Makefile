@@ -19,11 +19,11 @@ $(OBJS_DIR)%.o : $(SRCS_DIR)%.c
 	$(CC) $(CFLAGS) -c $< -o $@ -I $(INCLUDES)
 
 $(OBJS_DIR)%.o : $(SRCS_DIR)asm/%.s
-	$(AS) $< -o $@ 
+	$(AS) $< -o $@
 
 all			: $(BIN)
 
-$(BIN)		:  $(OBJS)
+$(BIN)		: $(OBJS)
 	$(LD) $(LINKER) -o $@ $^ --verbose
 	mkdir -p isodir/boot/grub
 	cp -i grub.cfg isodir/boot/grub
