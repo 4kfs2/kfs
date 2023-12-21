@@ -49,6 +49,7 @@ _start42:
 
 3:
 	movl $(0x000B8000 | 0x003), boot_page_table1 - 0x80000000 + 0 * 4
+	movl $(0x0010C000 | 0x003), boot_page_table1 - 0x80000000 + 268 * 4
 
 	movl $(boot_page_table1 - 0x80000000 + 0x003), boot_page_directory - 0x80000000 + 0
 	movl $(boot_page_table1 - 0x80000000 + 0x003), boot_page_directory - 0x80000000 + 0x200 * 4

@@ -1,6 +1,7 @@
 #include "../includes/utils.h"
 #include "../includes/terminal.h"
 #include "../includes/elf.h"
+#include "debug.h"
 
 # define CMD_SIZE 256
 
@@ -15,13 +16,23 @@ static void runcmd(int index, char *cmd)
 	}
 }
 
+void func2()
+{
+	backtrace();
+}
+
+void func()
+{
+	func2();
+}
+
 void kernel_main(unsigned long addr)
 {
 	// init_gdt();
 	terminal_initialize();
-
-	// parse_elf(addr);
-
+	// printf("%x\n", addr);
+	parse_elf(addr + 0x80000000);
+	func();
 	while (1)
 	{
 		int index = 0;
