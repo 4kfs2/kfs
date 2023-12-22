@@ -1,16 +1,5 @@
 #include "../includes/terminal.h"
-
-uint8_t inb(uint16_t port)
-{
-	uint8_t data;
-	asm volatile ("inb %1, %0" : "=a" (data) : "dN" (port));
-	return data;
-}
-
-void outb(uint16_t port, uint8_t data)
-{
-	asm volatile ("outb %0, %1" :: "a" (data), "dN" (port));
-}
+#include "../includes/x86.h"
 
 int out_buf_full(void)
 {

@@ -9,10 +9,6 @@
 # define KBRD_RESET 0xFE
 
 void	update_cursor(int, int);
-
 int		getchar();
-
-void	outb(uint16_t, uint8_t);
-uint8_t	inb(uint16_t);
 
 #endif
