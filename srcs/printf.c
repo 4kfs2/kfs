@@ -29,7 +29,6 @@ static int print_num(long num, int base)
 {
 	int r = 0;
 	unsigned long unum = num;
-	int divisor = base;
 
 	if (base == 10 && num <= 0)
 	{
