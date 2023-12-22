@@ -1,6 +1,6 @@
 #include <stdint.h>
 
-inline uint8_t
+static inline uint8_t
 inb(uint16_t port)
 {
 	uint8_t data;
@@ -8,7 +8,7 @@ inb(uint16_t port)
 	return data;
 }
 
-inline void
+static inline void
 outb(uint16_t port, uint8_t data)
 {
 	asm volatile ("outb %0, %1" :: "a" (data), "dN" (port));

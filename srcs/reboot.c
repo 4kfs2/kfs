@@ -1,5 +1,6 @@
 #include "../includes/utils.h"
 #include "../includes/keyboard.h"
+#include "../includes/x86.h"
 
 void reboot()
 {
