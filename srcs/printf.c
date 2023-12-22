@@ -28,7 +28,10 @@ static unsigned int get_quot(unsigned int num, int base)
 static int print_num(long num, int base)
 {
 	int r = 0;
-	if (num <= 0)
+	unsigned long unum = num;
+	int divisor = base;
+
+	if (base == 10 && num <= 0)
 	{
 		if (num == 0)
 		{
@@ -39,15 +42,15 @@ static int print_num(long num, int base)
 		{
 			terminal_putchar('-');
 			++r;
-			num *= -1;
+			unum = -num;
 		}
 	}
 
-	unsigned int quotient = get_quot(num, base);
+	unsigned int quotient = get_quot(unum, base);
 	while (quotient)
 	{
-		terminal_putchar(chars[num / quotient]);
-		num %= quotient;
+		terminal_putchar(chars[unum / quotient]);
+		unum %= quotient;
 		quotient /= base;
 		++r;
 	}
