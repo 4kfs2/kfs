@@ -1,9 +1,12 @@
 #include "../includes/utils.h"
 #include "../includes/terminal.h"
 #include "../includes/elf.h"
-#include "debug.h"
+#include "mm.h"
 
 # define CMD_SIZE 256
+
+extern unsigned long *pg_dir;
+extern unsigned long *pg_tbl;
 
 static void runcmd(int index, char *cmd)
 {
@@ -16,23 +19,15 @@ static void runcmd(int index, char *cmd)
 	}
 }
 
-void func2()
-{
-	backtrace();
-}
-
-void func()
-{
-	func2();
-}
-
 void kernel_main(unsigned long addr)
 {
 	// init_gdt();
 	terminal_initialize();
-	// printf("%x\n", addr);
-	parse_elf(addr + 0x80000000);
-	func();
+
+	// parse_elf(addr);
+	paging_init();
+	loadPageDirectory(pg_dir);
+	enablePaging();
 	while (1)
 	{
 		int index = 0;
