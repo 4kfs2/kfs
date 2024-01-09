@@ -51,13 +51,4 @@ typedef struct
 	Elf32_Half st_shndx;
 } Elf32_Sym;
 
-struct symTabMeta
-{
-	int index;
-	Elf32_Shdr *sections;
-};
-
-void		parse_elf(unsigned long);
-uint32_t	find_symbol(uint32_t);
-
 #endif
