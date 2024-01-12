@@ -30,7 +30,7 @@ void parse_bootinfo(unsigned long addr)
 					{
 						uint64_t endarea = mmap->addr + mmap->len;
 						mmi.totsz = mmi.totsz < endarea ? endarea : mmi.totsz;
-						printf ("base_addr = %x %x," " length = %d %d\n", (unsigned) (mmap->addr >> 32), (unsigned) (mmap->addr & 0xffffffff), (unsigned) (mmap->len >> 32), (unsigned) (mmap->len & 0xffffffff), (unsigned) mmap->type);
+						printf ("base_addr = %x %x," " length = %x %x\n", (unsigned) (mmap->addr >> 32), (unsigned) (mmap->addr & 0xffffffff), (unsigned) (mmap->len >> 32), (unsigned) (mmap->len & 0xffffffff), (unsigned) mmap->type);
 					}
 				}
 				if (mmi.totsz > 0xffffffff) mmi.totsz = 0xffffffff;
