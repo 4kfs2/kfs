@@ -7,6 +7,8 @@
 
 extern unsigned long *pg_dir;
 extern unsigned long *pg_tbl;
+extern unsigned long boot_page_directory;
+extern unsigned long _end;
 
 static void runcmd(int index, char *cmd)
 {
@@ -23,11 +25,10 @@ void kernel_main(unsigned long addr)
 {
 	// init_gdt();
 	terminal_initialize();
-
-	// parse_elf(addr);
-	paging_init();
-	loadPageDirectory(pg_dir);
-	enablePaging();
+	parse_elf(P2V(addr));
+	// loadPageDirectory(pg_dir);
+	// enablePaging();
+	printf("%x %x\n", &boot_page_directory, &_end);
 	while (1)
 	{
 		int index = 0;

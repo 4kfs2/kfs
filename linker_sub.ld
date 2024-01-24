@@ -3,27 +3,37 @@ ENTRY(_start42)
 SECTIONS
 {
 	. = 1M;
- 
-	.text :
-	{
+	_start = .;
+
+	.multiboot : {
 		*(.multiboot)
+	}
+	.multiboot.text : {
+		*(.multiboot.text)
+	}
+
+	. += 0xC0000000;
+	
+	.text ALIGN(4K) : AT( ADDR (.text) - 0xC0000000 )
+	{
 		*(.text)
 	}
  
-	.rodata :
+	.rodata ALIGN(4K) : AT( ADDR (.rodata) - 0xC0000000 )
 	{
 		*(.rodata)
 	}
  
-	.data :
+	.data ALIGN(4K) : AT( ADDR (.data) - 0xC0000000 )
 	{
 		*(.data)
 	}
  
-	.bss :
+	.bss ALIGN(4K) : AT( ADDR (.bss) - 0xC0000000 )
 	{
 		*(COMMON)
+		*(.bootstrap_stack)
 		*(.bss)
 	}
-	
+	_end = .;
 }
