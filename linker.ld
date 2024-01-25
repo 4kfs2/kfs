@@ -2,8 +2,8 @@ ENTRY(_start42)
  
 SECTIONS
 {
-	. = 1M;
 	_start = .;
+	. = 1M;
 
 	.multiboot : {
 		*(.multiboot)
@@ -36,5 +36,5 @@ SECTIONS
 		*(.bss)
 	}
 	_mapping_size = 0x200000;
-	_end = .;
+	_kernel_end = .;
 }
