@@ -18,12 +18,12 @@ multiboot_end:
 _start42:
 	movl $(boot_page_table1 - 0xC0000000), %edi
 	movl $0, %esi
-	movl $1023, %ecx
+	movl $1024, %ecx
 
 1:
 	cmpl $_start, %esi
 	jl 2f
-	cmpl $(_end - 0xC0000000), %esi
+	cmpl $_mapping_size, %esi
 	jge 3f
 
 	movl %esi, %edx
@@ -36,21 +36,6 @@ _start42:
 	loop 1b
 
 3:
-	movl %ebx, %ecx
-	andl $0xfffff000, %ecx 
-	orl $0x003, %ecx;
-	movl %ecx, %edi
-	shr $12, %edi
-	imul $4, %edi
-	movl $boot_page_table1, %edx
-	subl $0xC0000000, %edx
-	addl %edx, %edi
-	movl %ecx, (%edi)
-	addl $0x1000, %ecx
-	addl $4, %edi
-	movl %ecx, (%edi)
-	movl $(0x000B8000 | 0x003), boot_page_table1 - 0xC0000000 + 1023 * 4
-
 	movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0 // identity mapping
 	movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0x300 * 4
 
@@ -70,7 +55,7 @@ stack_bottom:
 .skip 0x4000
 stack_top:
 
-.global boot_page_directory
+.global boot_page_directory, boot_page_table1
 .section .bss, "a"
 	.align 4096
 boot_page_directory:
@@ -80,13 +65,11 @@ boot_page_table1:
 
 .section .text
 half:
-	movl $0, boot_page_directory + 0 // identity mapping한 페이지 디렉토리 엔트리 필요 x
+	movl $0, boot_page_directory + 0 // identity mapping한 엔트리 필요 x
 
 	# Reload crc3 to force a TLB flush so the changes to take effect.
 	movl %cr3, %ecx
 	movl %ecx, %cr3
-
-	
 
 	movl $stack_top, %esp
 	pushl	$0

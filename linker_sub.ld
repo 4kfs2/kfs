@@ -35,5 +35,6 @@ SECTIONS
 		*(.bootstrap_stack)
 		*(.bss)
 	}
+	_mapping_size = 0x200000;
 	_end = .;
 }
