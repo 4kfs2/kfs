@@ -4,11 +4,11 @@ CC			:= i686-elf-gcc
 LD			:= i686-elf-ld -T
 CFLAGS		:= -ffreestanding -Wall -Wextra -g
 AS			:= i686-elf-as
-LINKER		:= linker_sub.ld
+LINKER		:= linker.ld
 INCLUDES	:= includes
 SRCS_DIR	:= srcs/
-ASMSRCS		:= boot_sub.s init_seg.s enable_paging.s load_page_dir.s
-SRCS		:= kernel.c terminal.c utils.c vga.c printf.c keyboard.c debug.c elf.c reboot.c gdt.c panic.c memory.c
+ASMSRCS		:= boot.s init_seg.s
+SRCS		:= kernel.c terminal.c utils.c vga.c printf.c keyboard.c debug.c reboot.c gdt.c panic.c init.c mm.c
 OBJS_DIR	:= objs/
 OBJSNAME	:= $(SRCS:.c=.o)
 OBJS		:= $(SRCS:%.c=$(OBJS_DIR)%.o)
