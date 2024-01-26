@@ -1,41 +1,29 @@
 .set ARCH,	0
 .set MAGIC,	0xE85250D6
 
-.section .multiboot.data, "a"
+.section .multiboot, "a"
 .align	8
 .long	MAGIC
 .long 	ARCH
-.long 	multiboot_end - .multiboot.data
-.long 	-(MAGIC + ARCH + (multiboot_end - .multiboot.data))
+.long 	multiboot_end - .multiboot
+.long 	-(MAGIC + ARCH + (multiboot_end - .multiboot))
 .short	0
 .short	0
 .long	8
 multiboot_end:
 
-.section .bootstrap_stack, "a", @nobits
-stack_bottom:
-.skip 16384 
-stack_top:
-
-.section .bss, "aw", @nobits
-	.align 4096
-boot_page_directory:
-	.skip 4096
-boot_page_table1:
-	.skip 4096
-
 .section .multiboot.text, "a"
 .global _start42
 .type _start42, @function
 _start42:
-	movl $(boot_page_table1 - 0x80000000), %edi
+	movl $(boot_page_table1 - 0xC0000000), %edi
 	movl $0, %esi
-	movl $1023, %ecx
+	movl $1024, %ecx
 
 1:
-	cmpl $_kernel_start, %esi
+	cmpl $_start, %esi
 	jl 2f
-	cmpl $(_kernel_end - 0x80000000), %esi
+	cmpl $_mapping_size, %esi
 	jge 3f
 
 	movl %esi, %edx
@@ -48,36 +36,44 @@ _start42:
 	loop 1b
 
 3:
-	movl $(0x000B8000 | 0x003), boot_page_table1 - 0x80000000 + 0 * 4
-	movl $(0x0010C000 | 0x003), boot_page_table1 - 0x80000000 + 268 * 4
+	movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0 // identity mapping
+	movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0x300 * 4
 
-	movl $(boot_page_table1 - 0x80000000 + 0x003), boot_page_directory - 0x80000000 + 0
-	movl $(boot_page_table1 - 0x80000000 + 0x003), boot_page_directory - 0x80000000 + 0x200 * 4
-
-	movl $(boot_page_directory - 0x80000000), %ecx
+	movl $(boot_page_directory - 0xC0000000), %ecx
 	movl %ecx, %cr3
 
 	movl %cr0, %ecx
 	orl $0x80000000, %ecx
-	movl %ecx, %cr0
+	movl %ecx, %cr0 // cr0에 로드된 후, 페이징기능 켜짐. 즉, 아래 줄 부터 가상주소로 읽음.
 
-	lea 4f, %ecx
-	jmp *%ecx
+	lea half, %ecx // 해당 부분을 실행하기 위해서 identity mapping 부분이 필요
+	jmp *%ecx // 가상주소를 0xC0000000 위치로 이동
+
+.section .bootstrap_stack, "a"
+.align 16
+stack_bottom:
+.skip 0x4000
+stack_top:
+
+.global boot_page_directory, boot_page_table1
+.section .bss, "a"
+	.align 4096
+boot_page_directory:
+	.skip 4096
+boot_page_table1:
+	.skip 4096
 
 .section .text
+half:
+	movl $0, boot_page_directory + 0 // identity mapping한 엔트리 필요 x
 
-4:
+	# Reload crc3 to force a TLB flush so the changes to take effect.
 	movl %cr3, %ecx
 	movl %ecx, %cr3
 
-	mov $stack_top, %esp
+	movl $stack_top, %esp
 	pushl	$0
 	popf
 	pushl   %ebx
-
 	call kernel_main
-
-	cli
-1:	hlt
-	jmp 1b
-
+	

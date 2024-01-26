@@ -29,7 +29,7 @@ void parse_bootinfo(unsigned long addr)
 					if (mmap->type == 1) // type value of 1 == available RAM
 					{
 						uint64_t endarea = mmap->addr + mmap->len;
-						mmi.totsz = mmi.totsz < endarea ? endarea : mmi.totsz;
+						mmi.totsz = endarea <= 0xffffffff && mmi.totsz < endarea ? endarea : mmi.totsz;
 						printf ("base_addr = %x %x," " length = %x %x\n", (unsigned) (mmap->addr >> 32), (unsigned) (mmap->addr & 0xffffffff), (unsigned) (mmap->len >> 32), (unsigned) (mmap->len & 0xffffffff), (unsigned) mmap->type);
 					}
 				}
@@ -63,7 +63,7 @@ void kernel_main(unsigned long addr)
 {
 	// init_gdt();
 	terminal_initialize();
-	//parse_bootinfo(addr + 0x80000000);
 	mem_init();
+	parse_bootinfo(P2V(addr));
 	init();
 }
