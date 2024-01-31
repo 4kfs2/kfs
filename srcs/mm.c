@@ -2,7 +2,31 @@
 #include "utils.h"
 
 extern uint32_t _mapping_size;
+extern uint32_t boot_page_directory;
 struct meminfo mmi;
+page_dir_t *pgdir = &boot_page_directory;
+
+void test()
+{
+	printf("%x\n", pgdir);
+	uint32_t i;
+	for (i = 0; i < 1024; i++) // 디렉토리에서 테이블 할당 여부 찾기
+	{ 
+		if (pgdir->entries[i]) 
+		{
+			printf("%x\n", pgdir->entries[i]);
+			break ;
+		}
+	}
+	page_tbl_t *tmp = P2V(pgdir->entries[0x300] & (~0xfff));
+	for (uint32_t i = 0; i < 1024; i++) // 테이블에서 프레임 할당 여부 찾기
+	{ 
+		if (tmp->entries[i]) {
+			printf("%x %x\n",i, tmp->entries[i]);
+		}
+		break ;
+	}
+}
 
 void mem_init()
 {
@@ -13,4 +37,5 @@ void mem_init()
 	{
 		set_bit(i);
 	}
+	test();
 }
