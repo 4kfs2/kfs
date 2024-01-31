@@ -2,13 +2,10 @@
 #include "utils.h"
 #include "panic.h"
 
-#define IDX_FRAME(a) (a/(4*8))
-#define OFFSET_FRAME(a) (a%(4*8))
-
 uint32_t placement = &_kernel_end;
 struct meminfo mmi;
 
-static void set_bit(uint32_t addr)
+void set_bit(uint32_t addr)
 {
 	uint32_t frame = addr / 0x1000;
 	uint32_t idx = IDX_FRAME(frame);
@@ -16,7 +13,7 @@ static void set_bit(uint32_t addr)
 	mmi.frames[idx] |= (0x1 << off);
 }
 
-static void unset_bit(uint32_t addr)
+void unset_bit(uint32_t addr)
 {
 	uint32_t frame = addr / 0x1000;
 	uint32_t idx = IDX_FRAME(frame);
@@ -24,7 +21,7 @@ static void unset_bit(uint32_t addr)
 	mmi.frames[idx] &= ~(0x1 << off);
 }
 
-static uint32_t test_bit(uint32_t addr)
+uint32_t test_bit(uint32_t addr)
 {
 	uint32_t frame = addr / 0x1000;
 	uint32_t idx = IDX_FRAME(frame);
@@ -38,4 +35,3 @@ uint32_t bitmap_alloc(uint32_t size)
 	placement += size;
 	return start;
 }
-
