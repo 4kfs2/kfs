@@ -79,7 +79,7 @@ uint32_t *get_page(uint32_t addr)
 	uint32_t dir_off = addr >> (SHIFT + 10);
 	if (!pgdir->entries[dir_off]) // 테이블이 없는 경우
 	{
-		uint32_t tmp = var_partion(sizeof(page_tbl_t)); // TODO kmalloc
+		uint32_t tmp = var_partition(sizeof(page_tbl_t)); // TODO kmalloc
 		pgdir->entries[dir_off] = V2P(tmp) | 0x3;
 		memset(pgdir->entries[dir_off], 0, 0x1000U);
 	}
