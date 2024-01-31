@@ -26,12 +26,14 @@ void test()
 		}
 		break ;
 	}
+	alloc_frame(get_page(0xC0210000));
+	alloc_frame(get_page(0xC0201000));
 }
 
 void mem_init()
 {
 	mmi.nframes = mmi.totsz / 0x1000;
-	mmi.frames = bitmap_alloc(IDX_FRAME(mmi.nframes));
+	mmi.frames = var_partion(IDX_FRAME(mmi.nframes));
 	memset(mmi.frames, 0, IDX_FRAME(mmi.nframes));
 	for (uint32_t i = 0x0; i < (uint32_t)&_mapping_size; i += 0x1000U)
 	{

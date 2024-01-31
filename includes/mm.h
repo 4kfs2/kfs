@@ -36,10 +36,13 @@ typedef struct page_dir
 extern struct meminfo mmi;
 extern uint32_t _kernel_end;
 
-void mem_init();
-void set_bit(uint32_t addr);
-void unset_bit(uint32_t addr);
-uint32_t test_bit(uint32_t addr);
-uint32_t bitmap_alloc(uint32_t size);
+void		mem_init();
+void		set_bit(uint32_t addr);
+void		unset_bit(uint32_t addr);
+uint32_t	test_bit(uint32_t addr);
+uint32_t	var_partion(uint32_t size);
+uint32_t	get_frame();
+void		alloc_frame(uint32_t *page);
+uint32_t	*get_page(uint32_t addr);
 
 #endif
