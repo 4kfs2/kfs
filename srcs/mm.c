@@ -5,6 +5,7 @@ extern uint32_t _mapping_size;
 extern uint32_t boot_page_directory;
 struct meminfo mmi;
 page_dir_t *pgdir = &boot_page_directory;
+heap_t *kheap = 0;
 
 void test()
 {
@@ -37,7 +38,8 @@ void mem_init()
 	memset(mmi.frames, 0, IDX_FRAME(mmi.nframes));
 	for (uint32_t i = 0x0; i < (uint32_t)&_mapping_size; i += 0x1000U)
 	{
-		set_bit(i);
+		set_bit(i * 0x1000U);
 	}
-	test();
+	// test();
+	kheap = init_heap(0x10000, 0xFFFFFFFF, 0, 1);
 }
