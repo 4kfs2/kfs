@@ -41,11 +41,14 @@ uint32_t get_frame() // find frame
 	uint32_t idx, off;
 	for (idx = 0; idx < IDX_FRAME(mmi.nframes); idx++)
 	{
-		for (off = 0; off < 32; off++)
+		if (mmi.frames[idx] != 0xffffffff)
 		{
-			uint32_t tmp = 0x1 << off;
-			if ((mmi.frames[idx] & tmp) == 0)
-				return idx*32+off;
+			for (off = 0; off < 32; off++)
+			{
+				uint32_t tmp = 0x1 << off;
+				if ((mmi.frames[idx] & tmp) == 0)
+					return idx*32+off;
+			}
 		}
 	}
 	return (uint32_t)-1;
