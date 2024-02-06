@@ -41,5 +41,5 @@ void mem_init()
 		set_bit(i * 0x1000U);
 	}
 	// test();
-	kheap = init_heap(0x10000, 0xFFFFFFFF, 0, 1);
+	kheap = init_heap(0x10000, 0xFFFFE000, 0, 1);
 }
