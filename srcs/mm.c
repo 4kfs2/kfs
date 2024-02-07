@@ -39,4 +39,5 @@ void mem_init()
 	}
 	// test();
 	kheap = init_heap(0x10000, 0xFFFFE000, 0, 1);
+	init_vmpool(VMALLOC_START, VMALLOC_END);
 }
