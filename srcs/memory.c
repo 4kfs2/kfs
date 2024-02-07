@@ -69,25 +69,18 @@ void alloc_frame(uint32_t *page) // mapping page to frame
 	}
 }
 
-static uint32_t *_page(uint32_t addr)
+uint32_t *get_page(uint32_t addr)
 {
 	uint32_t addr20 = addr >> SHIFT;
 	uint32_t dir_off = addr20 >> 10;
 	uint32_t tbl_off = addr20 & 0x3ff;
-	page_tbl_t *table = P2V(pgdir->entries[dir_off] & (~0xfff)); // 엔트리에 물리 주소가 저장되어 있으므로 
-	return &table->entries[tbl_off];
-}
-
-uint32_t *get_page(uint32_t addr)
-{
-	uint32_t dir_off = addr >> (SHIFT + 10);
-	if (!pgdir->entries[dir_off]) // 테이블이 없는 경우
+	if (!pgdir->tables[dir_off]) // 테이블이 없는 경우
 	{
 		uint32_t tmp = var_partition(sizeof(page_tbl_t)); // TODO kmalloc
 		pgdir->entries[dir_off] = V2P(tmp) | 0x3;
 		memset(pgdir->entries[dir_off], 0, 0x1000U);
 	}
-	return _page(addr);
+	return &(pgdir->tables[dir_off]->entries[tbl_off]);
 }
 
 static int8_t header_lessthan(void *a, void *b)

@@ -15,17 +15,14 @@ void test()
 	{ 
 		if (pgdir->entries[i]) 
 		{
-			printf("%x\n", pgdir->entries[i]);
+			printf("%x : %x\n", i, pgdir->entries[i]);
 			break ;
 		}
 	}
-	page_tbl_t *tmp = P2V(pgdir->entries[0x300] & (~0xfff));
-	for (uint32_t i = 0; i < 1024; i++) // 테이블에서 프레임 할당 여부 찾기
+	page_tbl_t *tmp = pgdir->tables[0x300];
+	for (uint32_t i = 0; i < 10; i++) // 테이블에서 프레임 할당 여부 찾기
 	{ 
-		if (tmp->entries[i]) {
 			printf("%x %x\n",i, tmp->entries[i]);
-		}
-		break ;
 	}
 	alloc_frame(get_page(0xC0210000));
 	alloc_frame(get_page(0xC0201000));

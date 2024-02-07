@@ -34,7 +34,8 @@ typedef struct page_tbl
 
 typedef struct page_dir
 {
-	uint32_t entries[1024];
+	uint32_t entries[1024]; // physical_addr
+	page_tbl_t *tables[1024]; // virtual_addr
 } page_dir_t;
 
 typedef struct

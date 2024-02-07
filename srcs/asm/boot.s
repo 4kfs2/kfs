@@ -38,6 +38,7 @@ _start42:
 3:
 	movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0 // identity mapping
 	movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0x300 * 4
+	movl $(boot_page_table1), boot_page_directory - 0xC0000000 + 0x1000 + 0x300 * 4 // pgdir->tables[0x300] = boot_page_table1
 
 	movl $(boot_page_directory - 0xC0000000), %ecx
 	movl %ecx, %cr3
@@ -59,7 +60,7 @@ stack_top:
 .section .bss, "a"
 	.align 4096
 boot_page_directory:
-	.skip 4096
+	.skip 0x2000
 boot_page_table1:
 	.skip 4096
 
