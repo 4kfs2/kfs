@@ -2,6 +2,7 @@
 # define _MM_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "ordered_array.h"
 
 # define KERNEL_BASE 0xC0000000
@@ -9,8 +10,10 @@
 # define PAGE_SIZE 4096
 # define PAGE_MASK (~(PAGE_SIZE - 1))
 # define PAGING20(x) (uint32_t) (x & ~PAGE_MASK)
+
 # define P2V(x) (((uint32_t) x) + KERNEL_BASE)
 # define V2P(x) (((uint32_t) x) - KERNEL_BASE)
+
 #define IDX_FRAME(a) (a/(4*8))
 #define OFFSET_FRAME(a) (a%(4*8))
 #define ALIGN(a) if (a & 0x00000FFF) { a &= 0xFFFFF000; a += 0x1000; }
@@ -78,5 +81,28 @@ heap_t		*init_heap(uint32_t size, uint32_t max_addr, uint8_t is_user, uint8_t is
 void		*kmalloc(uint32_t size);
 void		*kmalloc_ap(uint32_t size, uint32_t *phys);
 void		kfree(void *addr);
+
+//kmalloc.c
+
+//vmalloc.c
+
+#define VMALLOC_START	0xF8000000 //3G + 896M
+#define VMALLOC_END		0xFFFFFFFF //4G
+
+typedef struct vm_struct
+{
+	uint32_t			addr;
+	unsigned long		length;
+	struct vm_struct	*next;
+	uint32_t*			frames;
+	unsigned long		frames_count;
+} vm_struct;
+
+extern vm_struct* vmlist;
+extern vm_struct* vmpool;
+
+void	init_vmpool(uint32_t start_addr, uint32_t end_addr);
+void	*vmalloc(unsigned long size);
+void	vfree(void *addr);
 
 #endif
