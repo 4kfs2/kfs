@@ -94,8 +94,8 @@ typedef struct vm_struct
 	uint32_t			addr;
 	unsigned long		length;
 	struct vm_struct	*next;
-	uint32_t*			frames;
-	unsigned long		frames_count;
+	// uint32_t*			frames;
+	// unsigned long		frames_count;
 } vm_struct;
 
 extern vm_struct* vmlist;
