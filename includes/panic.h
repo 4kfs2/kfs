@@ -4,5 +4,6 @@
 #include <stddef.h>
 
 void panic(const char*, size_t);
+void panic_1(const char*);
 
 #endif

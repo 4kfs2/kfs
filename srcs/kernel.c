@@ -63,7 +63,7 @@ void kernel_main(unsigned long addr)
 {
 	// init_gdt();
 	terminal_initialize();
-	mem_init();
 	parse_bootinfo(P2V(addr));
+	mem_init();
 	init();
 }
