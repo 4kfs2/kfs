@@ -13,8 +13,8 @@ static vm_struct*	get_newvms(uint32_t addr, unsigned long length)
 	new->addr = addr;
 	new->length = length;
 	new->next = 0;
-	new->frames = 0;
-	new->frames_count = 0;
+	// new->frames = 0;
+	// new->frames_count = 0;
 	return new;
 }
 
@@ -43,14 +43,20 @@ static void rmv_vms_pool(vm_struct *vms)
 
 static void alloc_uncont(vm_struct* vms, unsigned int size)
 {
-	unsigned long frames_count = size / 0x1000;
-	vms->frames_count = frames_count;
-	vms->frames = kmalloc(sizeof(uint32_t) * frames_count);
-	if (!vms->frames)
-		panic_1("out of phys space");
-	for (int i = 0; i < frames_count; ++i)
+	// unsigned long frames_count = size / 0x1000;
+	// vms->frames_count = frames_count;
+	// vms->frames = kmalloc(sizeof(uint32_t) * frames_count);
+	// if (!vms->frames)
+	// 	panic_1("out of phys space");
+	// for (int i = 0; i < frames_count; ++i)
+	// {
+	// 	vms->frames[i] = alloc_frame(get_page());
+	// }
+	uint32_t addr = vms->addr;
+	while (size /= 0x1000)
 	{
-		vms->
+		alloc_frame(get_page(addr));
+		addr += 0x1000;
 	}
 }
 
@@ -89,7 +95,7 @@ void *vmalloc(unsigned long size)
 			panic_1("out of vm space!");
 	}
 	alloc_uncont(vms, size);	//allocated (un)contiguous memory
-	linkaddr(vms);				//link virt addr and phys addr on pgt
+	//linkaddr(vms);				//link virt addr and phys addr on pgt
 	return addr;
 }
 
