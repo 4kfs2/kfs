@@ -1,6 +1,5 @@
 #include "../includes/mm.h"
 #include "../includes/panic.h"
-#include <sys/wait.h>
 
 vm_struct* vmlist; //allocated vm space
 vm_struct* vmpool; //available vm space
@@ -13,8 +12,6 @@ static vm_struct*	get_newvms(uint32_t addr, unsigned long length)
 	new->addr = addr;
 	new->length = length;
 	new->next = 0;
-	// new->frames = 0;
-	// new->frames_count = 0;
 	return new;
 }
 
@@ -92,62 +89,56 @@ static void rmv_vms(vm_struct* src, vm_struct *vms)
 	}
 }
 
-static void alloc_uncont(vm_struct* vms, unsigned int size)
+static void linkphys(vm_struct* vms, unsigned int size)
 {
-	// unsigned long frames_count = size / 0x1000;
-	// vms->frames_count = frames_count;
-	// vms->frames = kmalloc(sizeof(uint32_t) * frames_count);
-	// if (!vms->frames)
-	// 	panic_1("out of phys space");
-	// for (int i = 0; i < frames_count; ++i)
-	// {
-	// 	vms->frames[i] = alloc_frame(get_page());
-	// }
 	uint32_t addr = vms->addr;
-	while (size /= 0x1000)
+	while (size /= PAGE_SIZE)
 	{
 		alloc_frame(get_page(addr));
-		addr += 0x1000;
+		addr += PAGE_SIZE;
 	}
 }
 
-// static void linkaddr(vm_struct* vms)
-// {
-// }
+static void  unlinkphys(vm_struct *vms, unsigned int size)
+{
+	uint32_t addr = vms->addr;
+	while (size /= PAGE_SIZE)
+	{
+		free_frame(get_page(addr));
+		addr += PAGE_SIZE;
+	}
+}
 
 void *vmalloc(unsigned long size)
 {
-	void *addr;
-
-	if (size & 0x00000FFF) //page align
-	{
-		size &= 0xFFFFF000;
-		size += 0x1000;
-	}
 	vm_struct* vms;
+
+	ALIGN(size);
 	for (vms = vmpool; vms; vms = vms->next) //search through the pool
 	{
 		if (vms->length == size)
 		{
 			rmv_vms(vmpool, vms);
 			insrt_vms_list(vms);
+			break;
 		}
 		else if (vms->length > size)
 		{
 			vm_struct *newvms = get_newvms(vms->addr + size, vms->length - size);
-			if (newvms->length < 0x1000)
+			if (newvms->length < PAGE_SIZE)
 				panic_1("virtual address space corrupted!"); //sanity check
 			vms->length = size; //resize current vms
 			rmv_vms(vmpool, vms);
 			insrt_vms_list(vms);
 			insrt_vms_pool(newvms);
+			break;
 		}
-		else
-			panic_1("out of vm space!");
 	}
-	alloc_uncont(vms, size);	//allocated (un)contiguous memory
-	//linkaddr(vms);				//link virt addr and phys addr on pgt
-	return addr;
+	if (!vms)
+		panic_1("out of vm space!");
+	//find pages and mark the frames as occupied
+	linkphys(vms, size);
+	return (void *)(vms->addr);
 }
 
 void vfree(void *addr)
