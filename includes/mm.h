@@ -7,7 +7,7 @@
 
 # define KERNEL_BASE 0xC0000000
 # define SHIFT 12
-# define PAGE_SIZE 4096
+# define PAGE_SIZE 0x1000
 # define PAGE_MASK (~(PAGE_SIZE - 1))
 # define PAGING20(x) (uint32_t) (x & ~PAGE_MASK)
 
@@ -89,8 +89,6 @@ typedef struct vm_struct
 	uint32_t			addr;
 	unsigned long		length;
 	struct vm_struct	*next;
-	// uint32_t*			frames;
-	// unsigned long		frames_count;
 } vm_struct;
 
 extern vm_struct* vmlist;
