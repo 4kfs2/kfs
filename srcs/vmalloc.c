@@ -143,4 +143,23 @@ void *vmalloc(unsigned long size)
 
 void vfree(void *addr)
 {
+	struct vm_struct *vms = 0;
+	struct vm_struct *prev= 0;
+
+	//find vms from the list
+	for (vms = vmlist; vms; vms = vms->next)
+	{
+		if (vms->addr == addr)
+		{
+			rmv_vms(vmlist, vms);
+			insrt_vms_pool(vms);
+			break;
+		}
+		prev = vms;
+	}
+	if (!vms)
+		panic_1("pointer being freed was not allocated!");
+	
+	//find pages and mark the frames as available
+	unlinkphys(vms, vms->length);
 }
