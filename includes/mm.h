@@ -96,9 +96,6 @@ typedef struct vm_struct
 	struct vm_struct	*next;
 } vm_struct;
 
-extern vm_struct* vmlist;
-extern vm_struct* vmpool;
-
 void	init_vmpool(uint32_t start_addr, uint32_t end_addr);
 void	*vmalloc(unsigned long size);
 void	vfree(void *addr);

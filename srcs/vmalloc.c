@@ -15,13 +15,7 @@ static vm_struct*	get_newvms(uint32_t addr, unsigned long length)
 	return new;
 }
 
-void init_vmpool(uint32_t start_addr, uint32_t end_addr)
-{
-	vm_struct* new = get_newvms(start_addr, end_addr - start_addr);
-	vmpool = new;
-}
-
-static void insrt_vms_list(vm_struct *vms) //insert in ascending order of addr
+static void insert_vms_list(vm_struct *vms) //insert in ascending order of addr
 {
 	vm_struct* tmp = 0;
 	vm_struct* prev = 0;
@@ -36,10 +30,13 @@ static void insrt_vms_list(vm_struct *vms) //insert in ascending order of addr
 		}
 		prev = tmp;
 	}
-	if (!vmlist) vmlist = vms; else prev->next = vms;
+	if (!vmlist)
+		vmlist = vms;
+	else
+		prev->next = vms;
 }
 
-static void insrt_vms_pool(vm_struct *vms) //insert vms on avaliable vms
+static void insert_vms_pool(vm_struct *vms) //insert vms on avaliable vms
 {
 	vm_struct* tmp = 0;
 	vm_struct* prev = 0;
@@ -50,7 +47,8 @@ static void insrt_vms_pool(vm_struct *vms) //insert vms on avaliable vms
 		if (tmp->addr > vms->addr)
 		{
 			vms->next = tmp;
-			if(prev) prev->next = vms;
+			if (prev)
+				prev->next = vms;
 			if ((vms->addr + vms->addr) == tmp->addr) //merge into right node
 			{
 				vms->length += tmp->length;
@@ -67,10 +65,13 @@ static void insrt_vms_pool(vm_struct *vms) //insert vms on avaliable vms
 		}
 		prev = tmp;
 	}
-	if (!vmpool) vmpool = vms; else prev->next = vms;
+	if (!vmpool)
+		vmpool = vms;
+	else
+		prev->next = vms;
 }
 
-static void rmv_vms(vm_struct* src, vm_struct *vms)
+static void remove_vms(vm_struct* src, vm_struct *vms)
 {
 	vm_struct* tmp = 0;
 	vm_struct* prev = 0;
@@ -109,6 +110,12 @@ static void  unlinkphys(vm_struct *vms, unsigned int size)
 	}
 }
 
+void init_vmpool(uint32_t start_addr, uint32_t end_addr)
+{
+	vm_struct* new = get_newvms(start_addr, end_addr - start_addr);
+	vmpool = new;
+}
+
 void *vmalloc(unsigned long size)
 {
 	vm_struct* vms;
@@ -118,8 +125,8 @@ void *vmalloc(unsigned long size)
 	{
 		if (vms->length == size)
 		{
-			rmv_vms(vmpool, vms);
-			insrt_vms_list(vms);
+			remove_vms(vmpool, vms);
+			insert_vms_list(vms);
 			break;
 		}
 		else if (vms->length > size)
@@ -128,9 +135,9 @@ void *vmalloc(unsigned long size)
 			if (newvms->length < PAGE_SIZE)
 				panic_1("virtual address space corrupted!"); //sanity check
 			vms->length = size; //resize current vms
-			rmv_vms(vmpool, vms);
-			insrt_vms_list(vms);
-			insrt_vms_pool(newvms);
+			remove_vms(vmpool, vms);
+			insert_vms_list(vms);
+			insert_vms_pool(newvms);
 			break;
 		}
 	}
@@ -151,8 +158,8 @@ void vfree(void *addr)
 	{
 		if (vms->addr == addr)
 		{
-			rmv_vms(vmlist, vms);
-			insrt_vms_pool(vms);
+			remove_vms(vmlist, vms);
+			insert_vms_pool(vms);
 			break;
 		}
 		prev = vms;
