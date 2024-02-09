@@ -25,7 +25,8 @@ static void insert_vms_list(vm_struct *vms) //insert in ascending order of addr
 		if (tmp->addr > vms->addr)
 		{
 			vms->next = tmp;
-			if (prev) prev->next = vms;
+			if (prev)
+				prev->next = vms;
 			return ;
 		}
 		prev = tmp;
@@ -36,7 +37,8 @@ static void insert_vms_list(vm_struct *vms) //insert in ascending order of addr
 		prev->next = vms;
 }
 
-static void insert_vms_pool(vm_struct *vms) //insert vms on avaliable vms
+//insert vms on avaliable vms
+static void insert_vms_pool(vm_struct *vms)
 {
 	vm_struct* tmp = 0;
 	vm_struct* prev = 0;
@@ -46,16 +48,19 @@ static void insert_vms_pool(vm_struct *vms) //insert vms on avaliable vms
 	{
 		if (tmp->addr > vms->addr)
 		{
+			//link the nodes
 			vms->next = tmp;
 			if (prev)
 				prev->next = vms;
-			if ((vms->addr + vms->addr) == tmp->addr) //merge into right node
+			//merge into right node
+			if ((vms->addr + vms->length) == tmp->addr)
 			{
 				vms->length += tmp->length;
 				vms->next = tmp->next;
 				kfree(tmp);
 			}
-			if (prev && (prev->addr + prev->length) == vms->addr) //merge into left node
+			//merge into left node
+			if (prev && (prev->addr + prev->length) == vms->addr)
 			{
 				prev->length += vms->length;
 				prev->next = vms->next;
@@ -121,7 +126,8 @@ void *vmalloc(unsigned long size)
 	vm_struct* vms;
 
 	ALIGN(size);
-	for (vms = vmpool; vms; vms = vms->next) //search through the pool
+	//search through the pool
+	for (vms = vmpool; vms; vms = vms->next)
 	{
 		if (vms->length == size)
 		{
@@ -153,7 +159,7 @@ void vfree(void *addr)
 	struct vm_struct *vms = 0;
 	struct vm_struct *prev= 0;
 
-	//find vms from the list
+	//search through the list
 	for (vms = vmlist; vms; vms = vms->next)
 	{
 		if (vms->addr == addr)
