@@ -73,5 +73,7 @@ uint32_t	get_frame();
 void		alloc_frame(uint32_t *page);
 uint32_t	*get_page(uint32_t addr);
 heap_t		*init_heap(uint32_t size, uint32_t max_addr, uint8_t is_user, uint8_t is_write);
+void		*kmalloc(uint32_t size);
+void		*kmalloc_ap(uint32_t size, uint32_t *phys);
 
 #endif
