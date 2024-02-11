@@ -57,7 +57,7 @@ typedef struct
 
 typedef struct
 {
-	uint32_t header;
+	header_t *header;
 	uint32_t magic;
 } footer_t;
 
