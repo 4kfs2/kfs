@@ -16,6 +16,7 @@
 #define ALIGN(a) if (a & 0x00000FFF) { a &= 0xFFFFF000; a += 0x1000; }
 #define ARRAY_IDX_SIZE 0x20000
 #define HEAP_MAGIC 0xBABA1EFF
+#define HEAP_MIN_SIZE 0x9000
 
 struct meminfo
 {
@@ -76,5 +77,6 @@ uint32_t	*get_page(uint32_t addr);
 heap_t		*init_heap(uint32_t size, uint32_t max_addr, uint8_t is_user, uint8_t is_write);
 void		*kmalloc(uint32_t size);
 void		*kmalloc_ap(uint32_t size, uint32_t *phys);
+void		kfree(void *addr);
 
 #endif

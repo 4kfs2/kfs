@@ -46,7 +46,24 @@ static void expand(uint32_t new_size)
 		alloc_frame(get_page(kheap->start_addr + i));
 		i += PAGE_SIZE;
 	}
+	kheap->end_addr = kheap->start_addr + new_size; 
+}
+
+static uint32_t contract(uint32_t new_size)
+{
+	ALIGN(new_size);
+	if (new_size < HEAP_MIN_SIZE)
+		new_size = HEAP_MIN_SIZE;
+
+	uint32_t size = kheap->end_addr - kheap->start_addr;
+	uint32_t i = size - 0x1000;
+	while (i > new_size)
+	{
+		free_frame(get_page(kheap->start_addr + i));
+		i -= 0x1000;
+	}
 	kheap->end_addr = kheap->start_addr + new_size;
+	return new_size;
 }
 
 static void *alloc(uint32_t size, uint8_t align)
@@ -155,6 +172,74 @@ static void *alloc(uint32_t size, uint8_t align)
 	return (void *)((uint32_t)block_header + sizeof(header_t));
 }
 
+void kfree(void *addr)
+{
+	if (addr == 0)
+		return ;
+
+	header_t *header = (header_t *)((uint32_t)addr - sizeof(header_t));
+	footer_t *footer = (footer_t *)((uint32_t)header + header->size - sizeof(footer_t));
+
+	header->is_hole = 1;
+	uint8_t do_add = 1;
+
+	// 왼쪽 hole 합치기
+	footer_t *left_hole = (footer_t *)((uint32_t)header - sizeof(footer_t));
+	if ((uint32_t)left_hole >= kheap->start_addr &&
+		left_hole->magic == HEAP_MAGIC &&
+		left_hole->header->is_hole)
+	{
+		uint32_t size = header->size;
+		header = left_hole->header;
+		footer->header = header;
+		header->size += size;
+		do_add = 0;
+	}
+
+	// 오른쪽 hole 합치기
+	header_t *right_hole = (header_t *)((uint32_t)footer + sizeof(footer_t));
+	if ((uint32_t)right_hole < kheap->end_addr &&
+		right_hole->magic == HEAP_MAGIC &&
+		right_hole->is_hole)
+	{
+		header->size += right_hole->size;
+		footer = (footer_t *)((uint32_t)right_hole + right_hole->size - sizeof(footer_t));
+
+		uint32_t iter = 0;
+		while ((iter < kheap->arr.size) &&
+				(select_ordered_array(iter, &kheap->arr) != (type_t)right_hole))
+			iter++;
+
+		delete_ordered_array(iter, &kheap->arr);
+	}
+
+	if ((uint32_t)footer + sizeof(footer_t) == kheap->end_addr)
+	{
+		uint32_t old_length = kheap->end_addr - kheap->start_addr;
+		uint32_t new_length = contract((uint32_t)header - kheap->start_addr);
+
+		if (header->size - (old_length - new_length) > 0)
+		{
+			header->size -= old_length - new_length;
+			footer = (footer_t *)((uint32_t)header + header->size - sizeof(footer_t));
+			footer->magic = HEAP_MAGIC;
+			footer->header = header;
+		}
+		else
+		{
+			uint32_t iter = 0;
+			while ((iter < kheap->arr.size) &&
+					(select_ordered_array(iter, &kheap->arr) != (type_t)right_hole))
+				iter++;
+
+			if (iter < kheap->arr.size)
+				delete_ordered_array(iter, &kheap->arr);
+		}
+	}
+	if (do_add == 1)
+		insert_ordered_array((type_t)header, &kheap->arr);
+}
+
 static void *kmalloc_init(uint32_t size, uint8_t align, uint32_t *phys)
 {
 	void *addr = alloc(size, align);
@@ -175,3 +260,4 @@ void *kmalloc_ap(uint32_t size, uint32_t *phys)
 {
 	return kmalloc_init(size, 1, phys);
 }
+
