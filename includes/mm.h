@@ -100,22 +100,4 @@ void	init_vmpool(uint32_t start_addr, uint32_t end_addr);
 void	*vmalloc(unsigned long size);
 void	vfree(void *addr);
 
-//kmalloc.c
-
-//vmalloc.c
-
-#define VMALLOC_START	0xF8000000 //3G + 896M
-#define VMALLOC_END		0xFFFFFFFF //4G
-
-typedef struct vm_struct
-{
-	uint32_t			addr;
-	unsigned long		length;
-	struct vm_struct	*next;
-} vm_struct;
-
-void	init_vmpool(uint32_t start_addr, uint32_t end_addr);
-void	*vmalloc(unsigned long size);
-void	vfree(void *addr);
-
 #endif
