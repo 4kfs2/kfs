@@ -69,7 +69,7 @@ static uint32_t contract(uint32_t new_size)
 static void *alloc(uint32_t size, uint8_t align)
 {
 	uint32_t new_size = size + sizeof(header_t) + sizeof(footer_t); 
-	uint32_t iter = find_hole(size, align);
+	uint32_t iter = find_hole(new_size, align);
 	if (iter == -1)
 	{
 		uint32_t length = kheap->end_addr - kheap->start_addr;
