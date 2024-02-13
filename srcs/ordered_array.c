@@ -41,3 +41,13 @@ type_t select_ordered_array(uint32_t idx, ordered_array_t *arr)
 		panic_1("check arr_size, idx");
 	return arr->arr[idx];
 }
+
+void delete_ordered_array(uint32_t idx, ordered_array_t *arr)
+{
+	while (idx < arr->size)
+	{
+		arr->arr[idx] = arr->arr[idx + 1];
+		idx++;
+	}
+	arr->size--;
+}
