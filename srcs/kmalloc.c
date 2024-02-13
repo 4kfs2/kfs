@@ -94,6 +94,42 @@ static void *alloc(uint32_t size, uint8_t align)
 		}
 		return alloc(size, align);
 	}
+	// hole -> block
+	header_t *target_hole = (header_t *)select_ordered_array(iter, &kheap->arr);
+	uint32_t hole_loc = (uint32_t)target_hole;
+	uint32_t hole_size = target_hole->size;
+	
+	// 요청된 크기만큼 나눠준 후에 hole의 크기가 header와 footer의 크기 합 보다 작은 경우 
+	if (hole_size - new_size < sizeof(header_t) + sizeof(footer_t))
+	{
+		size += hole_size - new_size;
+		new_size = hole_size;
+	}
+	if (align && (hole_loc & 0xFFFFF000))
+	{
+		uint32_t new_loc = hole_loc - (hole_loc & 0xFFF) + 0x1000 - sizeof(header_t);
+		header_t *header = (header_t *)hole_loc;
+		header->size = 0x1000 - (hole_loc & 0xFFF) - sizeof(header_t);
+		header->magic = HEAP_MAGIC;
+		header->is_hole = 1;
+		footer_t *footer = (footer_t *)(new_loc - sizeof(footer_t));
+		footer->header = header;
+		footer->magic = HEAP_MAGIC;
+		hole_loc = new_loc;
+		hole_size -= header->size;
+	}
+	else
+	{
+		delete_ordered_array(iter, &kheap->arr);
+	}
+	header_t *block_header = (header_t *)hole_loc;
+	block_header->is_hole = 1;
+	block_header->size = new_size;
+	block_header->magic = HEAP_MAGIC;
+	footer_t *block_footer = (footer_t *)(hole_loc + new_size - sizeof(footer_t));
+	block_footer->header = block_header;
+	block_footer->magic = HEAP_MAGIC;
+
 }
 
 static void *kmalloc_init(uint32_t size, uint8_t align, uint32_t *phys)
