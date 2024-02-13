@@ -70,6 +70,7 @@ void		unset_bit(uint32_t addr);
 uint32_t	test_bit(uint32_t addr);
 uint32_t	var_partition(uint32_t size);
 uint32_t	get_frame();
+void		free_frame(uint32_t *page);
 void		alloc_frame(uint32_t *page);
 uint32_t	*get_page(uint32_t addr);
 heap_t		*init_heap(uint32_t size, uint32_t max_addr, uint8_t is_user, uint8_t is_write);

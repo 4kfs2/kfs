@@ -69,6 +69,16 @@ void alloc_frame(uint32_t *page) // mapping page to frame
 	}
 }
 
+void free_frame(uint32_t *page)
+{
+	uint32_t frame = (*page) / 0x1000;
+	if (frame)
+	{
+		unset_bit(frame * 0x1000);
+		*page = 0;
+	}
+}
+
 uint32_t *get_page(uint32_t addr)
 {
 	uint32_t addr20 = addr >> SHIFT;
