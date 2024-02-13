@@ -58,7 +58,7 @@ static void *alloc(uint32_t size, uint8_t align)
 		uint32_t length = kheap->end_addr - kheap->start_addr;
 		uint32_t end_addr = kheap->end_addr;
 		
-		expand(length + size);
+		expand(length + new_size);
 		uint32_t new_length = kheap->end_addr - kheap->start_addr;
 		iter = 0;
 		uint32_t idx = -1;
@@ -89,6 +89,12 @@ static void *alloc(uint32_t size, uint8_t align)
 			header_t *header = (header_t *)select_ordered_array(idx, &kheap->arr);
 			header->size += new_length - length;
 			footer_t *footer = (footer_t *)((uint32_t)header + header->size - sizeof(footer_t));
+			if ((uint32_t)footer + sizeof(footer_t) > kheap->end_addr)
+			{
+				uint32_t length = kheap->end_addr - kheap->start_addr;
+				uint32_t size = (uint32_t)footer - kheap->end_addr + sizeof(footer_t);
+				expand(length+size);
+			}			
 			footer->header = header;
 			footer->magic = HEAP_MAGIC;
 		}
@@ -136,13 +142,13 @@ static void *alloc(uint32_t size, uint8_t align)
 		header->magic = HEAP_MAGIC;
 		header->size = hole_size - block_header->size;
 		footer_t *footer = (footer_t *)(hole_loc + header->size - sizeof(footer_t));
-		if ((uint32_t)footer + sizeof(footer_t) >= kheap->end_addr)
+		if ((uint32_t)footer + sizeof(footer_t) > kheap->end_addr)
 		{
 			uint32_t length = kheap->end_addr - kheap->start_addr;
 			uint32_t size = (uint32_t)footer - kheap->end_addr + sizeof(footer_t);
 			expand(length+size);
-		}
-		footer->header= header;
+		}			
+		footer->header = header;
 		footer->magic = HEAP_MAGIC;
 		insert_ordered_array((type_t)header, &kheap->arr);
 	}
@@ -154,8 +160,8 @@ static void *kmalloc_init(uint32_t size, uint8_t align, uint32_t *phys)
 	void *addr = alloc(size, align);
 	if (phys)
 	{
-		uint32_t page = (uint32_t)get_page((uint32_t)addr);
-		*phys = page & 0xFFFFF000;
+		uint32_t *page = (uint32_t *)get_page((uint32_t)addr);
+		*phys = (*page) & 0xFFFFF000;
 	}
 	return addr;
 }
