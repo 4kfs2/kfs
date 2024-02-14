@@ -37,8 +37,8 @@ static void expand(uint32_t new_size)
 
 	ALIGN(new_size);
 
-	if (kheap->start_addr > kheap->start_addr + new_size)
-		panic_1("expand: overflow\n");
+	if (kheap->start_addr + new_size > kheap->max_addr)
+		panic_1("expand: check max_addr\n");
 
 	uint32_t i = kheap->end_addr - kheap->start_addr;
 	while (i < new_size)
