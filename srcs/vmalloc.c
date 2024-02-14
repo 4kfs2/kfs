@@ -119,20 +119,22 @@ static void remove_vms_pool(vm_struct *vms)
 static void linkphys(vm_struct* vms, unsigned int size)
 {
 	uint32_t addr = vms->addr;
-	while (size /= PAGE_SIZE)
+	while (size)
 	{
 		alloc_frame(get_page(addr));
 		addr += PAGE_SIZE;
+		size -= PAGE_SIZE;
 	}
 }
 
 static void  unlinkphys(vm_struct *vms, unsigned int size)
 {
 	uint32_t addr = vms->addr;
-	while (size /= PAGE_SIZE)
+	while (size)
 	{
 		free_frame(get_page(addr));
 		addr += PAGE_SIZE;
+		size -= PAGE_SIZE;
 	}
 }
 
