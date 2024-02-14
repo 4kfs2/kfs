@@ -35,7 +35,7 @@ void mem_init()
 	memset(mmi.frames, 0, IDX_FRAME(mmi.nframes));
 	for (uint32_t i = 0x0; i < (uint32_t)&_mapping_size; i += 0x1000U)
 	{
-		set_bit(i * 0x1000U);
+		set_bit(i);
 	}
 	// test();
 	kheap = init_heap(0x10000, 0xFFFFE000, 0, 1);
