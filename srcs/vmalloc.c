@@ -20,7 +20,7 @@ static void insert_vms_list(vm_struct *vms) //insert in ascending order of addr
 	vm_struct* tmp = 0;
 	vm_struct* prev = 0;
 
-	for (tmp = vmlist; tmp; vmlist = vmlist->next)
+	for (tmp = vmlist; tmp; tmp = tmp->next)
 	{
 		if (tmp->addr > vms->addr)
 		{
@@ -76,20 +76,41 @@ static void insert_vms_pool(vm_struct *vms)
 		prev->next = vms;
 }
 
-static void remove_vms(vm_struct* src, vm_struct *vms)
+static void remove_vms_list(vm_struct *vms)
 {
 	vm_struct* tmp = 0;
 	vm_struct* prev = 0;
 
-	for (tmp = src; tmp; tmp = tmp->next)
+	for (tmp = vmlist; tmp; tmp = tmp->next)
 	{
 		if (tmp == vms)
 		{
 			if (prev)
 				prev->next = tmp->next;
 			else
-				src = tmp->next;
+				vmlist = tmp->next;
 			tmp->next = 0;
+			return ;
+		}
+		prev = tmp;
+	}
+}
+
+static void remove_vms_pool(vm_struct *vms)
+{
+	vm_struct* tmp = 0;
+	vm_struct* prev = 0;
+
+	for (tmp = vmpool; tmp; tmp = tmp->next)
+	{
+		if (tmp == vms)
+		{
+			if (prev)
+				prev->next = tmp->next;
+			else
+				vmpool = tmp->next;
+			tmp->next = 0;
+			return ;
 		}
 		prev = tmp;
 	}
@@ -131,7 +152,7 @@ void *vmalloc(unsigned long size)
 	{
 		if (vms->length == size)
 		{
-			remove_vms(vmpool, vms);
+			remove_vms_pool(vms);
 			insert_vms_list(vms);
 			break;
 		}
@@ -140,8 +161,8 @@ void *vmalloc(unsigned long size)
 			vm_struct *newvms = get_newvms(vms->addr + size, vms->length - size);
 			if (newvms->length < PAGE_SIZE)
 				panic_1("virtual address space corrupted!"); //sanity check
+			remove_vms_pool(vms);
 			vms->length = size; //resize current vms
-			remove_vms(vmpool, vms);
 			insert_vms_list(vms);
 			insert_vms_pool(newvms);
 			break;
@@ -164,7 +185,7 @@ void vfree(void *addr)
 	{
 		if (vms->addr == addr)
 		{
-			remove_vms(vmlist, vms);
+			remove_vms_list(vms);
 			insert_vms_pool(vms);
 			break;
 		}
