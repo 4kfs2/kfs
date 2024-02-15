@@ -66,6 +66,8 @@ static void insert_vms_pool(vm_struct *vms)
 				prev->next = vms->next;
 				kfree(vms);
 			}
+			else
+				vmpool = vms;
 			return ;
 		}
 		prev = tmp;
@@ -187,6 +189,8 @@ void vfree(void *addr)
 	{
 		if (vms->addr == addr)
 		{
+			//find pages and mark the frames as available
+			unlinkphys(vms, vms->length);
 			remove_vms_list(vms);
 			insert_vms_pool(vms);
 			break;
@@ -196,6 +200,4 @@ void vfree(void *addr)
 	if (!vms)
 		panic_1("pointer being freed was not allocated!");
 	
-	//find pages and mark the frames as available
-	unlinkphys(vms, vms->length);
 }
