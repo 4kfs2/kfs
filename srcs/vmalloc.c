@@ -27,6 +27,8 @@ static void insert_vms_list(vm_struct *vms) //insert in ascending order of addr
 			vms->next = tmp;
 			if (prev)
 				prev->next = vms;
+			else
+				vmlist = vms;
 			return ;
 		}
 		prev = tmp;
